@@ -1,4 +1,7 @@
 
+
+console.log("START");
+
 const API_URL = "https://script.google.com/macros/s/AKfycbyXJnhoHYru7JJqlBGefo6kmxMVK87S36BupxbZ4kPCEFmN7A6gVd7tbWrcqZQmOaZP/exec";
 const CACHE_KEY = "echoQuestionnaireDraftV2";
 const QUESTIONS_KEY = "echoQuestionnaireQuestionsV2";
