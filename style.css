@@ -8,7 +8,7 @@
     --line: #dce2d9;
     --coral: #e8a18b;
     --shadow: 0 22px 70px rgba(23, 36, 31, .08);
-    --question-card-min-height: 500px;
+    --question-card-min-height: 480px;
 }
 
 * {
