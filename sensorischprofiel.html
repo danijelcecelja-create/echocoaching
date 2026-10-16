@@ -14,12 +14,9 @@ document.write('<link rel="stylesheet" href="style.css?v=' + Date.now() + '">');
 </script>
 </head>
 <body>
-<header >
-
-</header>
+<header></header>
 <main id="top" class="page-shell">
   <section class="intro" id="intro">
-    
     <h1>Leer jezelf<br><span>beter begrijpen.</span></h1>
     <p class="intro-copy">Neem je tijd. Er zijn geen juiste of foute antwoorden. Kies per stelling het antwoord dat het best bij jou past.</p>
     <div class="intro-meta">
@@ -42,7 +39,19 @@ document.write('<link rel="stylesheet" href="style.css?v=' + Date.now() + '">');
       >
     </div>
     <button class="button button-primary" id="start-button" type="button">Start de vragenlijst <span aria-hidden="true">↗</span></button>
+    <button class="button button-quiet" id="restart-button" type="button">Opnieuw beginnen</button>
   </section>
+
+  <dialog id="restart-dialog" aria-labelledby="restart-dialog-title">
+    <h2 id="restart-dialog-title">Opnieuw beginnen?</h2>
+    <p>Weet je zeker dat je opnieuw wilt beginnen?</p>
+    <p>Je antwoorden, de lokaal bewaarde vragenlijst en alle nog niet verzonden inzendingen op dit toestel worden verwijderd. Inzendingen die al in de spreadsheet staan, worden niet verwijderd.</p>
+    <div class="question-actions">
+      <button class="button button-quiet" id="cancel-restart-button" type="button">Nee, verdergaan</button>
+      <button class="button button-primary" id="confirm-restart-button" type="button">Ja, opnieuw beginnen</button>
+    </div>
+  </dialog>
+
   <section class="questionnaire hidden" id="questionnaire" aria-live="polite">
     <div class="progress-top">
       <span id="progress-label">VRAAG 1 VAN 232</span>
@@ -68,6 +77,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + Date.now() + '">');
       <span id="save-status">Antwoorden worden lokaal bewaard</span>
     </div>
   </section>
+
   <section class="completion hidden" id="completion" aria-live="polite">
     <div class="completion-symbol">✓</div>
     <p class="eyebrow">BEDANKT OM TE DELEN</p>
