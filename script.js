@@ -498,9 +498,28 @@ function setDeliveryState(status, message) {
   el.deliveryText.textContent = message;
 }
 
+
+
+function resumeQuestionnaire() {
+    if (!state.questions.length) return;
+
+    const firstUnansweredIndex = state.questions.findIndex(question => {
+        const answer = state.answers[question.id];
+        return answer === undefined || answer === null || answer === "";
+    });
+
+    state.currentIndex = firstUnansweredIndex === -1
+        ? state.questions.length - 1
+        : firstUnansweredIndex;
+
+    saveDraft();
+    renderQuestion();
+}
+
+
+
 async function initialize() {
   loadDraft();
-
   const hasCachedQuestions = loadCachedQuestions();
 
   if (hasCachedQuestions) {
@@ -529,9 +548,11 @@ async function initialize() {
     }
   }
 
+  resumeQuestionnaire();
   state.loading = false;
   processQueue();
 }
+
 
 el.start.addEventListener("click", showQuestionnaire);
 
