@@ -4,6 +4,7 @@ console.log("START");
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyXJnhoHYru7JJqlBGefo6kmxMVK87S36BupxbZ4kPCEFmN7A6gVd7tbWrcqZQmOaZP/exec";
 
+
 const CACHE_KEY = "echoQuestionnaireDraftV2";
 const QUESTIONS_KEY = "echoQuestionnaireQuestionsV2";
 const QUEUE_KEY = "echoQuestionnaireQueueV2";
@@ -13,6 +14,7 @@ const state = {
   questions: [],
   options: [],
   answers: {},
+  respondentName: "",
   currentIndex: 0,
   submittedId: null,
   sending: false,
@@ -25,6 +27,7 @@ const el = {
   questionnaire: document.getElementById("questionnaire"),
   completion: document.getElementById("completion"),
   start: document.getElementById("start-button"),
+  respondentName: document.getElementById("respondent-name"),
   count: document.getElementById("question-count"),
   progressLabel: document.getElementById("progress-label"),
   progressPercent: document.getElementById("progress-percent"),
@@ -67,6 +70,7 @@ function createId() {
 
 function saveDraft() {
   writeJson(CACHE_KEY, {
+    respondentName: state.respondentName,
     answers: state.answers,
     currentIndex: state.currentIndex,
     updatedAt: new Date().toISOString()
@@ -79,11 +83,17 @@ function saveDraft() {
 function loadDraft() {
   const draft = readJson(CACHE_KEY, null);
 
-  if (!draft || !draft.answers) {
+  if (!draft) {
     return;
   }
 
-  state.answers = draft.answers;
+  state.respondentName = String(draft.respondentName || "");
+  el.respondentName.value = state.respondentName;
+
+  if (draft.answers && typeof draft.answers === "object") {
+    state.answers = draft.answers;
+  }
+
   state.currentIndex = Math.max(0, Number(draft.currentIndex) || 0);
 }
 
@@ -144,8 +154,6 @@ function validateQuestionData(data) {
   };
 }
 
-
-
 function jsonpRequest(params) {
   return new Promise(function(resolve, reject) {
     const callbackName = "echoJsonp_" + createId().replace(/-/g, "");
@@ -185,8 +193,6 @@ function jsonpRequest(params) {
   });
 }
 
-
-
 async function fetchQuestions() {
   if (!API_URL || API_URL.includes("PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE")) {
     throw new Error("API_URL_NOT_CONFIGURED");
@@ -201,7 +207,6 @@ async function fetchQuestions() {
 
   saveCachedQuestions();
 }
-
 
 function loadCachedQuestions() {
   const cached = readJson(QUESTIONS_KEY, null);
@@ -299,6 +304,21 @@ function showQuestionnaire() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function startQuestionnaire() {
+  const name = el.respondentName.value.trim();
+
+  if (!name) {
+    el.respondentName.setCustomValidity("Vul je naam in om te starten.");
+    el.respondentName.reportValidity();
+    return;
+  }
+
+  el.respondentName.setCustomValidity("");
+  state.respondentName = name;
+  saveDraft();
+  showQuestionnaire();
+}
+
 function getQueue() {
   const queue = readJson(QUEUE_KEY, []);
   return Array.isArray(queue) ? queue : [];
@@ -317,7 +337,7 @@ function createSubmission() {
 
   return {
     action: "submit",
-    submissionId: createId(),
+    submissionId: state.respondentName.trim() + "_" + createId(),
     submittedAt: new Date().toISOString(),
     questions: state.questions.map(function(question) {
       return {
@@ -367,7 +387,6 @@ function finishQuestionnaire() {
   processQueue();
 }
 
-
 async function sendSubmission(item) {
   if (!API_URL || API_URL.includes("PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE")) {
     throw new Error("API_URL_NOT_CONFIGURED");
@@ -407,7 +426,6 @@ async function sendSubmission(item) {
     throw error;
   }
 }
-
 
 function retryDelay(attempts) {
   return RETRY_BASE_MS;
@@ -498,25 +516,21 @@ function setDeliveryState(status, message) {
   el.deliveryText.textContent = message;
 }
 
-
-
 function resumeQuestionnaire() {
-    if (!state.questions.length) return;
+  if (!state.questions.length) return;
 
-    const firstUnansweredIndex = state.questions.findIndex(question => {
-        const answer = state.answers[question.id];
-        return answer === undefined || answer === null || answer === "";
-    });
+  const firstUnansweredIndex = state.questions.findIndex(function(question) {
+    const answer = state.answers[String(question.id)];
+    return answer === undefined || answer === null || answer === "";
+  });
 
-    state.currentIndex = firstUnansweredIndex === -1
-        ? state.questions.length - 1
-        : firstUnansweredIndex;
+  state.currentIndex = firstUnansweredIndex === -1
+    ? state.questions.length - 1
+    : firstUnansweredIndex;
 
-    saveDraft();
-    renderQuestion();
+  saveDraft();
+  renderQuestion();
 }
-
-
 
 async function initialize() {
   loadDraft();
@@ -553,8 +567,13 @@ async function initialize() {
   processQueue();
 }
 
+el.start.addEventListener("click", startQuestionnaire);
 
-el.start.addEventListener("click", showQuestionnaire);
+el.respondentName.addEventListener("input", function() {
+  el.respondentName.setCustomValidity("");
+  state.respondentName = el.respondentName.value;
+  saveDraft();
+});
 
 el.previous.addEventListener("click", function() {
   if (state.currentIndex > 0) {
