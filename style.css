@@ -1,4 +1,5 @@
- :root{
+
+:root{
     --ink:#17241f;
     --muted:#66716b;
     --paper:#f7f7f2;
@@ -9,7 +10,7 @@
     --coral:#e8a18b;
     --shadow:0 22px 70px rgba(23,36,31,.08)
 }
- *{
+*{
     box-sizing:border-box
 }
 html{
@@ -366,4 +367,3 @@ body{
         gap:6px
     }
 }
- 
