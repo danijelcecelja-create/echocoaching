@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="nl">
 <head>
@@ -17,6 +16,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + Date.now() + '">');
 <body>
 <header></header>
 <main id="top" class="page-shell">
+  <button class="button button-quiet restart-control" id="restart-button" type="button">Opnieuw beginnen</button>
+
   <section class="intro" id="intro">
     <h1>Leer jezelf<br><span>beter begrijpen.</span></h1>
     <p class="intro-copy">Neem je tijd. Er zijn geen juiste of foute antwoorden. Kies per stelling het antwoord dat het best bij jou past.</p>
@@ -40,57 +41,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + Date.now() + '">');
       >
     </div>
     <button class="button button-primary" id="start-button" type="button">Start de vragenlijst <span aria-hidden="true">↗</span></button>
-    <button class="button button-quiet" id="restart-button" type="button">Opnieuw beginnen</button>
   </section>
 
   <dialog id="restart-dialog" aria-labelledby="restart-dialog-title">
     <h2 id="restart-dialog-title">Opnieuw beginnen?</h2>
-    <p>Weet je zeker dat je opnieuw wilt beginnen?</p>
-    <p>Je antwoorden, de lokaal bewaarde vragenlijst en alle nog niet verzonden inzendingen op dit toestel worden verwijderd. Inzendingen die al in de spreadsheet staan, worden niet verwijderd.</p>
-    <div class="question-actions">
-      <button class="button button-quiet" id="cancel-restart-button" type="button">Nee, verdergaan</button>
-      <button class="button button-primary" id="confirm-restart-button" type="button">Ja, opnieuw beginnen</button>
-    </div>
-  </dialog>
-
-  <section class="questionnaire hidden" id="questionnaire" aria-live="polite">
-    <div class="progress-top">
-      <span id="progress-label">VRAAG 1 VAN 232</span>
-      <span id="progress-percent">0%</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progress-fill"></div>
-    </div>
-    <div class="question-card">
-      <p class="eyebrow">NEEM JE TIJD</p>
-      <h2 id="question-text"></h2>
-      <fieldset class="answer-list" id="answer-list">
-        <legend class="sr-only">Kies één antwoord</legend>
-      </fieldset>
-      <p class="validation-message" id="validation-message" role="alert"></p>
-      <div class="question-actions">
-        <button class="button button-quiet" id="previous-button" type="button">← Vorige</button>
-        <button class="button button-primary" id="next-button" type="button">Volgende <span aria-hidden="true">→</span></button>
-      </div>
-    </div>
-    <div class="autosave-note">
-      <span class="save-indicator" id="save-indicator"></span>
-      <span id="save-status">Antwoorden worden lokaal bewaard</span>
-    </div>
-  </section>
-
-  <section class="completion hidden" id="completion" aria-live="polite">
-    <div class="completion-symbol">✓</div>
-    <p class="eyebrow">BEDANKT OM TE DELEN</p>
-    <h2>Je bent erdoor.</h2>
-    <p id="completion-copy">Je antwoorden staan klaar om veilig doorgestuurd te worden.</p>
-    <div class="delivery-status" id="delivery-status">
-      <span class="status-dot"></span>
-      <span id="delivery-text">Inzending wordt klaargezet…</span>
-    </div>
-    <button class="button button-quiet" id="edit-button" type="button">Antwoorden bekijken</button>
-  </section>
-</main>
-<script src="script.js" defer></script>
-</body>
-</html>
