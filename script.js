@@ -1,9 +1,7 @@
 
-
 console.log("START");
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyvTn7VaNm75LBwrBsgc933x9qSG66EADXLf0UKBFMULBjeeqV9OLcWzkCh28gaiI4v/exec";
-
+const API_URL = "https://script.google.com/macros/s/AKfycbxWtFRqegZSQi_NyGSFiV6j8VN6SMow33K3pYvilLVa9_R--euNCDcHZmgGIJXYaqna/exec";
 
 const CACHE_KEY = "echoQuestionnaireDraftV2";
 const QUESTIONS_KEY = "echoQuestionnaireQuestionsV2";
@@ -132,10 +130,20 @@ function validateQuestionData(data) {
     throw new Error("Geen antwoordmogelijkheden ontvangen.");
   }
 
+  const optionValues = new Set();
+
   data.options.forEach(function(option) {
-    if (!option || !String(option.value || "").trim()) {
+    const value = String(option && option.value || "").trim();
+
+    if (!value) {
       throw new Error("Ongeldige antwoordmogelijkheid.");
     }
+
+    if (optionValues.has(value)) {
+      throw new Error("Dubbele antwoordmogelijkheden ontvangen.");
+    }
+
+    optionValues.add(value);
   });
 
   return {
@@ -147,8 +155,8 @@ function validateQuestionData(data) {
     }),
     options: data.options.map(function(option) {
       return {
-        value: String(option.value),
-        label: String(option.label || option.value)
+        value: String(option.value).trim(),
+        label: String(option.label || option.value).trim()
       };
     })
   };
