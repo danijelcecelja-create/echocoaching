@@ -1,5 +1,5 @@
 
-const API_URL = "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const API_URL = "https://script.google.com/macros/s/AKfycbzwH0S0iULe3GgmVdyfnpch31vmZSoYW9vtRRi5_2hEAv_cyn4MJy6RpXw2lQKtk9Fs/exec";
 const CACHE_KEY = "echoQuestionnaireDraftV2";
 const QUESTIONS_KEY = "echoQuestionnaireQuestionsV2";
 const QUEUE_KEY = "echoQuestionnaireQueueV2";
