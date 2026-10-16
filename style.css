@@ -440,9 +440,7 @@ body {
 }
 
 @media (max-width: 600px) {
-    :root {
-        --question-card-min-height: 680px;
-    }
+   
 
     .site-header {
         height: 8px;
