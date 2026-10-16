@@ -25,6 +25,10 @@ const el = {
   questionnaire: document.getElementById("questionnaire"),
   completion: document.getElementById("completion"),
   start: document.getElementById("start-button"),
+  restart: document.getElementById("restart-button"),
+  restartDialog: document.getElementById("restart-dialog"),
+  cancelRestart: document.getElementById("cancel-restart-button"),
+  confirmRestart: document.getElementById("confirm-restart-button"),
   respondentName: document.getElementById("respondent-name"),
   count: document.getElementById("question-count"),
   progressLabel: document.getElementById("progress-label"),
@@ -576,7 +580,37 @@ async function initialize() {
   processQueue();
 }
 
+function openRestartConfirmation() {
+  if (!el.restartDialog.open) {
+    el.restartDialog.showModal();
+  }
+}
+
+function cancelRestart() {
+  el.restartDialog.close();
+}
+
+function restartQuestionnaire() {
+  localStorage.removeItem(CACHE_KEY);
+  localStorage.removeItem(QUESTIONS_KEY);
+  localStorage.removeItem(QUEUE_KEY);
+  clearTimeout(state.retryTimer);
+  location.reload();
+}
+
 el.start.addEventListener("click", startQuestionnaire);
+
+el.restart.addEventListener("click", openRestartConfirmation);
+
+el.cancelRestart.addEventListener("click", cancelRestart);
+
+el.confirmRestart.addEventListener("click", restartQuestionnaire);
+
+el.restartDialog.addEventListener("click", function(event) {
+  if (event.target === el.restartDialog) {
+    cancelRestart();
+  }
+});
 
 el.respondentName.addEventListener("input", function() {
   el.respondentName.setCustomValidity("");
