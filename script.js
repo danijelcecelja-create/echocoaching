@@ -3,11 +3,11 @@
 console.log("START");
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyXJnhoHYru7JJqlBGefo6kmxMVK87S36BupxbZ4kPCEFmN7A6gVd7tbWrcqZQmOaZP/exec";
+
 const CACHE_KEY = "echoQuestionnaireDraftV2";
 const QUESTIONS_KEY = "echoQuestionnaireQuestionsV2";
 const QUEUE_KEY = "echoQuestionnaireQueueV2";
 const RETRY_BASE_MS = 5000;
-const RETRY_MAX_MS = 300000;
 
 const state = {
   questions: [],
@@ -410,10 +410,7 @@ async function sendSubmission(item) {
 
 
 function retryDelay(attempts) {
-  return Math.min(
-    RETRY_BASE_MS * Math.pow(2, Math.min(Math.max(attempts - 1, 0), 6)),
-    RETRY_MAX_MS
-  );
+  return RETRY_BASE_MS;
 }
 
 async function processQueue() {
