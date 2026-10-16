@@ -310,6 +310,7 @@ function startQuestionnaire() {
   if (!name) {
     el.respondentName.setCustomValidity("Vul je naam in om te starten.");
     el.respondentName.reportValidity();
+    el.respondentName.focus();
     return;
   }
 
