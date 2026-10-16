@@ -141,28 +141,64 @@ function validateQuestionData(data) {
   };
 }
 
+
+
+function jsonpRequest(params) {
+  return new Promise(function(resolve, reject) {
+    const callbackName = "echoJsonp_" + createId().replace(/-/g, "");
+    const script = document.createElement("script");
+    const url = new URL(API_URL);
+
+    Object.keys(params).forEach(function(key) {
+      url.searchParams.set(key, params[key]);
+    });
+
+    url.searchParams.set("callback", callbackName);
+    url.searchParams.set("_", String(Date.now()));
+
+    let finished = false;
+
+    function cleanup() {
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = function(data) {
+      if (finished) return;
+      finished = true;
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = function() {
+      if (finished) return;
+      finished = true;
+      cleanup();
+      reject(new Error("JSONP_REQUEST_FAILED"));
+    };
+
+    script.src = url.toString();
+    document.head.appendChild(script);
+  });
+}
+
+
+
 async function fetchQuestions() {
   if (!API_URL || API_URL.includes("PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE")) {
-    throw new Error("De API-URL moet nog worden ingevuld.");
+    throw new Error("API_URL_NOT_CONFIGURED");
   }
 
-  const response = await fetch(API_URL + "?action=questions", {
-    method: "GET",
-    redirect: "follow",
-    cache: "no-store"
-  });
-
-  if (!response.ok) {
-    throw new Error("HTTP_" + response.status);
-  }
-
-  const data = validateQuestionData(await response.json());
+  const data = validateQuestionData(
+    await jsonpRequest({ action: "questions" })
+  );
 
   state.questions = data.questions;
   state.options = data.options;
 
   saveCachedQuestions();
 }
+
 
 function loadCachedQuestions() {
   const cached = readJson(QUESTIONS_KEY, null);
@@ -328,32 +364,47 @@ function finishQuestionnaire() {
   processQueue();
 }
 
+
 async function sendSubmission(item) {
   if (!API_URL || API_URL.includes("PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE")) {
     throw new Error("API_URL_NOT_CONFIGURED");
   }
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(item.payload),
-    redirect: "follow"
-  });
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(item.payload),
+      redirect: "follow"
+    });
 
-  if (!response.ok) {
-    throw new Error("HTTP_" + response.status);
-  }
+    const result = await response.json();
 
-  const result = await response.json();
+    if (result && result.success === true) {
+      return result;
+    }
 
-  if (!result || result.success !== true) {
     throw new Error(result && result.error ? result.error : "SERVER_REJECTED");
-  }
+  } catch (error) {
+    const status = await jsonpRequest({
+      action: "status",
+      submissionId: item.payload.submissionId
+    });
 
-  return result;
+    if (status && status.success === true && status.received === true) {
+      return {
+        success: true,
+        duplicate: true,
+        submissionId: item.payload.submissionId
+      };
+    }
+
+    throw error;
+  }
 }
+
 
 function retryDelay(attempts) {
   return Math.min(
