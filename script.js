@@ -2,7 +2,7 @@
 
 console.log("START");
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyXJnhoHYru7JJqlBGefo6kmxMVK87S36BupxbZ4kPCEFmN7A6gVd7tbWrcqZQmOaZP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyvTn7VaNm75LBwrBsgc933x9qSG66EADXLf0UKBFMULBjeeqV9OLcWzkCh28gaiI4v/exec";
 
 
 const CACHE_KEY = "echoQuestionnaireDraftV2";
