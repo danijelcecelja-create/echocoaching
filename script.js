@@ -1,5 +1,5 @@
 
-console.log("START");
+console.log("sSTART");
 
 const API_URL = "https://script.google.com/macros/s/AKfycbxWtFRqegZSQi_NyGSFiV6j8VN6SMow33K3pYvilLVa9_R--euNCDcHZmgGIJXYaqna/exec";
 
