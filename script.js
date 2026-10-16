@@ -581,36 +581,57 @@ async function initialize() {
 }
 
 function openRestartConfirmation() {
-  if (!el.restartDialog.open) {
-    el.restartDialog.showModal();
+  if (el.restartDialog && typeof el.restartDialog.showModal === "function") {
+    if (!el.restartDialog.open) {
+      el.restartDialog.showModal();
+    }
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Opnieuw beginnen? Je antwoorden, de lokaal bewaarde vragenlijst en alle nog niet verzonden inzendingen op dit toestel worden verwijderd. Inzendingen die al in de spreadsheet staan, blijven behouden."
+  );
+
+  if (confirmed) {
+    restartQuestionnaire();
   }
 }
 
 function cancelRestart() {
-  el.restartDialog.close();
+  if (el.restartDialog && el.restartDialog.open) {
+    el.restartDialog.close();
+  }
 }
 
 function restartQuestionnaire() {
-  localStorage.removeItem(CACHE_KEY);
-  localStorage.removeItem(QUESTIONS_KEY);
-  localStorage.removeItem(QUEUE_KEY);
+  localStorage.removeItem("echoQuestionnaireDraftV2");
+  localStorage.removeItem("echoQuestionnaireQuestionsV2");
+  localStorage.removeItem("echoQuestionnaireQueueV2");
   clearTimeout(state.retryTimer);
   location.reload();
 }
 
 el.start.addEventListener("click", startQuestionnaire);
 
-el.restart.addEventListener("click", openRestartConfirmation);
+if (el.restart) {
+  el.restart.addEventListener("click", openRestartConfirmation);
+}
 
-el.cancelRestart.addEventListener("click", cancelRestart);
+if (el.cancelRestart) {
+  el.cancelRestart.addEventListener("click", cancelRestart);
+}
 
-el.confirmRestart.addEventListener("click", restartQuestionnaire);
+if (el.confirmRestart) {
+  el.confirmRestart.addEventListener("click", restartQuestionnaire);
+}
 
-el.restartDialog.addEventListener("click", function(event) {
-  if (event.target === el.restartDialog) {
-    cancelRestart();
-  }
-});
+if (el.restartDialog) {
+  el.restartDialog.addEventListener("click", function(event) {
+    if (event.target === el.restartDialog) {
+      cancelRestart();
+    }
+  });
+}
 
 el.respondentName.addEventListener("input", function() {
   el.respondentName.setCustomValidity("");
