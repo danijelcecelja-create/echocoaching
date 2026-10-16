@@ -8,7 +8,7 @@
     --line: #dce2d9;
     --coral: #e8a18b;
     --shadow: 0 22px 70px rgba(23, 36, 31, .08);
-    --question-card-min-height: 1020px;
+    --question-card-min-height: 500px;
 }
 
 * {
@@ -261,7 +261,7 @@ body {
 
 .question-card h2 {
     font-family: Manrope, sans-serif;
-    font-size: clamp(1.2rem, 2.6vw, 1.75rem);
+    font-size: clamp(1.2rem, 2.6vw, 1.5rem);
     line-height: 1.25;
     letter-spacing: -.025em;
     margin: 0 0 18px;
